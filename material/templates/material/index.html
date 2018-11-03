@@ -1,0 +1,31 @@
+{% extends 'material/base.html' %}
+
+{% block content %}
+    {% if all_materials %}
+    <h3>Here are all materials:</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>Material Name</td>
+                <td>Material Description</td>
+                <td>Material Quantity</td>
+                <td>Material Subcategory</td>
+                <td>Material Category</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in all_materials %}
+            <tr>
+                <td>{{ material.name }}</td>
+                <td>{{ material.description }}</td>
+                <td>{{ material.quantity }}</td>
+                <td>{{ material.subcategory }}</td>
+                <td>{{ material.subcategory.category }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h3>You don't have any materials</h3>
+    {% endif %}
+{% endblock %}

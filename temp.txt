@@ -1,0 +1,88 @@
+
+PS D:\Docs\Hariom Docs\Studies\Python\Django\website> python manage.py sqlmigrate material 0001
+BEGIN;
+--
+-- Create model Category
+--
+CREATE TABLE "material_category" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "descrip
+tion" varchar(200) NOT NULL);
+--
+-- Create model Material
+--
+CREATE TABLE "material_material" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "descrip
+tion" varchar(200) NOT NULL, "quantity" integer NOT NULL);
+--
+-- Create model Subcategory
+--
+CREATE TABLE "material_subcategory" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "desc
+ription" varchar(200) NOT NULL, "category_id" integer NOT NULL REFERENCES "material_category" ("id") DEFERRABLE INITIALL
+Y DEFERRED);
+--
+-- Add field subcategory to material
+--
+ALTER TABLE "material_material" RENAME TO "material_material__old";
+CREATE TABLE "material_material" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(20) NOT NULL, "descrip
+tion" varchar(200) NOT NULL, "quantity" integer NOT NULL, "subcategory_id" integer NOT NULL REFERENCES "material_subcate
+gory" ("id") DEFERRABLE INITIALLY DEFERRED);
+INSERT INTO "material_material" ("name", "quantity", "id", "description", "subcategory_id") SELECT "name", "quantity", "
+id", "description", NULL FROM "material_material__old";
+DROP TABLE "material_material__old";
+CREATE INDEX "material_subcategory_category_id_9226f640" ON "material_subcategory" ("category_id");
+CREATE INDEX "material_material_subcategory_id_3d415298" ON "material_material" ("subcategory_id");
+COMMIT;
+
+
+
+querying one to many relationship in django:
+
+PS D:\Docs\Hariom Docs\Studies\Python\Django\website> python manage.py shell
+Python 3.4.4 (v3.4.4:737efcadf5a6, Dec 20 2015, 20:20:57) [MSC v.1600 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from material.models import Category, Subcategory, Material
+>>> Category.objects.filter(name="Category1")
+<QuerySet [<Category: Category1>]>
+>>> cat1 = Category.objects.get(name="Category1")
+>>> cat1
+<Category: Category1>
+>>> cat1.subcategory_set
+<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x0000
+0000048B3FD0>
+>>> cat1.subcategory_set.all()
+<QuerySet [<Subcategory: Subcategory1>, <Subcategory: Subcategory2>, <Subcategory: Subcategory3>]>
+>>> subcat = Subcategory.objects.get(name="Subcategory1")
+>>> subcat
+<Subcategory: Subcategory1>
+>>> subcat.material_set
+<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x0000
+0000048BA2B0>
+>>> subcat.material_set.all()
+<QuerySet []>
+>>>
+
+>>> Material.objects.all()
+<QuerySet []>
+>>> Material.objects.filter(subcategory__category__name="Category1")
+<QuerySet []>
+>>>
+
+>>> Category.objects.filter(subcategory__name="Subcategory1")
+<QuerySet [<Category: Category1>]>
+>>> Category.objects.filter(subcategory__material__name='')
+<QuerySet []>
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

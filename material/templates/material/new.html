@@ -1,0 +1,18 @@
+{% extends 'material/base.html' %}
+
+{% block content %}
+<h3>Add new material:</h3>
+    <form action="" method="POST">
+        {% csrf_token %}
+        Name: <input type="text" name="name" required /> <br>
+        Description: <input type="text" name="description" required/> <br>
+        Quantity: <input type="text" name="quantity" required/> <br>
+        Subcategory:
+        <select name="subcategory" id="" required>
+            {% for subcategory in subcategories %}
+            <option value="{{subcategory}}">{{ subcategory }}</option>
+            {% endfor %}
+        </select> <br>
+        <input type="submit" value="Add new material" />
+    </form>
+{% endblock %}
